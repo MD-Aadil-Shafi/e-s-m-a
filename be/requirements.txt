@@ -2,7 +2,9 @@ fastapi
 uvicorn[standard]
 pydantic
 pydantic-settings
+pydantic[email]
 sqlalchemy
+sqlalchemy[asyncio]
 asyncpg
 psycopg2-binary
 python-jose

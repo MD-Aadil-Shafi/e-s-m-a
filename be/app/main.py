@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+# from app import models
+from app.routes.auth import router as auth_router
 
 
 app = FastAPI(title = "Employee Salary Management")
+
+print(settings)
 
 origins = [
     "*",
@@ -21,6 +25,8 @@ app.add_middleware(
 @app.get("/api/v1/test")
 async def test()->dict:
     return {"message": "test route working fine."}
+
+app.include_router(auth_router)
 
 
 if __name__ == "__main__":
