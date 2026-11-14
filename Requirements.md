@@ -45,6 +45,7 @@ The system will replace Excel-based processes, reduce manual errors, improve dat
 | Support of multiple currencies | Can be integrated with existing system by maintaining a currency table in database |
 | Compare salary distribution by department, designation, and country | can be integrated with current system |
 | Import existing employee and salary data from Excel/CSV | can be integrated with existing system |
+| Notification system for HR and Employee | can be extended with existing system or separate service |
 
 ## 4. Success Criteria
 
