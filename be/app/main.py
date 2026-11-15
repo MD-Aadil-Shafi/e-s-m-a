@@ -7,8 +7,6 @@ from app.routes.auth import router as auth_router
 
 app = FastAPI(title = "Employee Salary Management")
 
-print(settings)
-
 origins = [
     "*",
     # "http://localhost:5173"
