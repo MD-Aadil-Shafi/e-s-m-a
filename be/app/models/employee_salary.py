@@ -3,6 +3,7 @@ from sqlalchemy import (
     Numeric, Date, UniqueConstraint
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db.base import Base
 
@@ -40,6 +41,12 @@ class EmployeeSalary(Base):
     payment_status = Column(
         String(20),
         default="PENDING",
+        nullable=False
+    )
+
+    added_by = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
         nullable=False
     )
 

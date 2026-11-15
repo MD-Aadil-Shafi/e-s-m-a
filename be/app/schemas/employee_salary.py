@@ -61,6 +61,7 @@ class EmployeeSalaryResponse(BaseModel):
 
     payment_date: date | None
     payment_status: str
+    added_by: str
 
     class Config: 
             from_attributes = True 

@@ -8,10 +8,10 @@ from app.enums.employment_type import EmploymentType
 class Employee(Base):
     __tablename__ = "employees"
     id = Column(Integer, primary_key=True)
-    firstname = Column(String(12), nullable=False)
+    firstname = Column(String(12), nullable=False, index=True)
     lastname = Column(String(12), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
-    country = Column(String(30), nullable=False)
+    country = Column(String(30), nullable=False, index=True)
     state = Column(String(30), nullable=False)
     city = Column(String(30), nullable=False)
     zipcode = Column(String(10), nullable=False)
@@ -19,10 +19,11 @@ class Employee(Base):
     phone_number = Column(String(15), nullable=False)
     department = Column(String(40), nullable=False)
     designation = Column(String(40), nullable=False)
-    employment_type = role = Column(
+    employment_type = Column(
             Enum(EmploymentType, name="employment_type"),
             default=EmploymentType.FULLTIME,
-            nullable=False
+            nullable=False,
+            index=True
         )
     joining_date = Column(Date, nullable=False)
     leaving_date = Column(Date, nullable=True)
@@ -32,7 +33,7 @@ class Employee(Base):
         back_populates="employee"
     )
     remark = Column(String(255), nullable=True)
-
+    added_by = Column(String(36), default="system")
     employee_logs = relationship("Log", back_populates="employee",
                                  uselist=False,
                     cascade="all, delete-orphan")
