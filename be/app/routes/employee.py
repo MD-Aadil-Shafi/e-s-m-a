@@ -10,7 +10,7 @@ from app.utils.log_helper import add_employee_log
 from app.enums.employment_type import EmploymentType
 
 router = APIRouter(
-    prefix="/employee",
+    prefix="/api/v1/employee",
     tags=["Employees"],
     dependencies=[Depends(get_current_user)]
     )
@@ -23,7 +23,7 @@ async def create(
 ):
     db_employee = Employee(
         **employee.dict(),
-        added_by = user.id
+        added_by = str(user.id)
     )
     db.add(db_employee)
     await db.commit()
@@ -78,11 +78,11 @@ async def update(
 
 
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("/", response_model=PaginatedResponse[EmployeeResponse])
 async def list_employees(
     db: AsyncSession = Depends(get_db),
     page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=100),
     search: str | None = None,
     country: str | None = None,
     employment_type: str | None = None,

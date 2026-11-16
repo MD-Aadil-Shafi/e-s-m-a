@@ -1,7 +1,7 @@
 from pydantic import (
     BaseModel, EmailStr, Field, create_model
 ) 
-from datetime import date
+from datetime import date, datetime
 
 class EmployeeCreate(BaseModel):
     firstname: str = Field(min_length=1, max_length=12)
@@ -43,7 +43,7 @@ class EmployeeUpdate(BaseModel):
     
 class EmployeeResponse(EmployeeCreate):
     id: int
-    created_at: date
+    created_at: datetime
     added_by: str
     
     class Config: 

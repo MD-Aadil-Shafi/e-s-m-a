@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import datetime
 
 class LogCreate(BaseModel):
     employee_id: int
@@ -13,4 +13,4 @@ class LogResponse(BaseModel):
     id: int
     employee_id: int
     logs: list[str] | None
-    updated_at: date
+    updated_at: datetime
