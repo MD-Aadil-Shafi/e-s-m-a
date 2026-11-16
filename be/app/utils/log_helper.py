@@ -37,6 +37,7 @@ async def add_employee_log(
 
         return log_record
     
-    except Exception:
+    except Exception as e:
+        print("log error => : ", e)
         await db.rollback()
         raise

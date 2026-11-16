@@ -7,7 +7,7 @@ from alembic import context
 from app.db.base import Base
 from app.models import ( 
     User, Employee, RefreshToken,
-    Log, EmployeeSalary)
+    Log, EmployeeSalary, EmployeeBasePay)
 from app.core.config import settings
 
 # this is the Alembic Config object, which provides

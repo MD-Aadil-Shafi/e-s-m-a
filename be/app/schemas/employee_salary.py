@@ -1,14 +1,14 @@
 from decimal import Decimal
 from pydantic import BaseModel, Field 
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 class EmployeeSalaryCreate(BaseModel):
     employee_id: int
     payroll_month: int = Field(ge=1, le=12)
     payroll_year: int = Field(ge=2000)
-    base_salary: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
-    allowances: Decimal = Field(default=Decimal("0.00"), ge=0)
+    # base_salary: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
+    # allowances: Decimal = Field(default=Decimal("0.00"), ge=0)
     deductions: Decimal = Field(default=Decimal("0.00"), ge=0)
     total_days: int = Field(gt=0)
     working_days: int = Field(ge=0)
@@ -16,19 +16,29 @@ class EmployeeSalaryCreate(BaseModel):
     unpaid_days: int = Field(default=0, ge=0)
 # gross, net, payment handled inward
 
-class EmployeePromoteOrTransfer(BaseModel):
-    employee_id: int
-    designation: Optional[str] = None
-    department: Optional[str] = None
+class EmployeePromote(BaseModel):
     base_salary: Decimal | None = Field(default=None, gt=0, max_digits=12, decimal_places=2)
     allowances: Decimal | None = Field(default=None, ge=0)
+    remark: str
+
+class EmployeeBasePayCreate(BaseModel):
+    employee_id: int
+    base_salary: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
+    allowances: Decimal = Field(default=Decimal("0.00"), ge=0)
+
+class EmployeeBasePayResponse(BaseModel):
+    employee_id: int
+    base_salary: Decimal
+    allowances: Decimal
+    added_by: str
+    created_at: datetime
 
 
 class EmployeeSalaryUpdate(BaseModel):
-    base_salary: Decimal | None = Field(
-        default=None, gt=0, max_digits=12, decimal_places=2
-    )
-    allowances: Decimal | None = Field(default=None, ge=0)
+    # base_salary: Decimal | None = Field(
+    #     default=None, gt=0, max_digits=12, decimal_places=2
+    # )
+    # allowances: Decimal | None = Field(default=None, ge=0)
     deductions: Decimal | None = Field(default=None, ge=0)
 
     total_days: int | None = Field(default=None, gt=0)

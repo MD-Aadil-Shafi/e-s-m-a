@@ -8,6 +8,8 @@ from app.core.security import get_current_user, get_db
 from datetime import datetime
 from app.utils.log_helper import add_employee_log
 from app.enums.employment_type import EmploymentType
+from app.models.logs import Log
+from app.schemas.logs import LogResponse
 
 router = APIRouter(
     prefix="/api/v1/employee",
@@ -43,6 +45,20 @@ async def getSingle(
         raise HTTPException(404, "No employee found with this ID.")
 
     return employee
+
+@router.get("/logs/{id}", response_model=LogResponse)
+async def getLogs(
+    id: int, 
+    db: AsyncSession = Depends(get_db)
+    ):
+    result = await db.execute(
+        select(Log).where(Log.employee_id == id)
+    )
+    logs = result.scalar_one_or_none()
+    if not logs:
+        raise HTTPException(404, "No logs found with this ID.")
+
+    return logs
 
 
 @router.patch("/{id}", response_model=EmployeeResponse)

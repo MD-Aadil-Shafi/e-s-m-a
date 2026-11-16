@@ -37,4 +37,5 @@ class Employee(Base):
     employee_logs = relationship("Log", back_populates="employee",
                                  uselist=False,
                     cascade="all, delete-orphan")
+    base_pay = relationship("EmployeeBasePay", back_populates="employee")
 
