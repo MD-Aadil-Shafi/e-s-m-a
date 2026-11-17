@@ -79,7 +79,7 @@ class TestGetBasePay:
     """Test cases for getting base pay record."""
 
     @pytest.mark.asyncio
-    async def test_get_base_pay_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_get_base_pay_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful retrieval of base pay."""
         # Create employee and base pay
         employee = Employee(
@@ -105,7 +105,7 @@ class TestGetBasePay:
             employee_id=employee.id,
             base_salary=Decimal("6000.00"),
             allowances=Decimal("600.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
@@ -134,7 +134,7 @@ class TestCreateSalary:
     """Test cases for creating salary record."""
 
     @pytest.mark.asyncio
-    async def test_create_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_create_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful salary creation."""
         # Create employee and base pay
         employee = Employee(
@@ -160,7 +160,7 @@ class TestCreateSalary:
             employee_id=employee.id,
             base_salary=Decimal("5000.00"),
             allowances=Decimal("500.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
@@ -240,7 +240,7 @@ class TestGetLastSalary:
     """Test cases for getting last salary record."""
 
     @pytest.mark.asyncio
-    async def test_get_last_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_get_last_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful retrieval of last salary."""
         # Create employee, base pay, and salary
         employee = Employee(
@@ -266,7 +266,7 @@ class TestGetLastSalary:
             employee_id=employee.id,
             base_salary=Decimal("4500.00"),
             allowances=Decimal("400.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
@@ -285,7 +285,7 @@ class TestGetLastSalary:
             paid_days=22,
             unpaid_days=0,
             payment_status="PENDING",
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(salary)
         await db_session.commit()
@@ -314,7 +314,7 @@ class TestUpdateSalary:
     """Test cases for updating salary record."""
 
     @pytest.mark.asyncio
-    async def test_update_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_update_salary_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful salary update."""
         # Create employee, base pay, and salary
         employee = Employee(
@@ -340,7 +340,7 @@ class TestUpdateSalary:
             employee_id=employee.id,
             base_salary=Decimal("7000.00"),
             allowances=Decimal("700.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
@@ -359,7 +359,7 @@ class TestUpdateSalary:
             paid_days=22,
             unpaid_days=0,
             payment_status="PENDING",
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(salary)
         await db_session.commit()
@@ -396,7 +396,7 @@ class TestGetAllSalariesByEmployee:
     """Test cases for getting all salaries by employee."""
 
     @pytest.mark.asyncio
-    async def test_get_all_salaries_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_get_all_salaries_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful retrieval of all salaries for an employee."""
         # Create employee, base pay, and multiple salaries
         employee = Employee(
@@ -422,7 +422,7 @@ class TestGetAllSalariesByEmployee:
             employee_id=employee.id,
             base_salary=Decimal("5500.00"),
             allowances=Decimal("550.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
@@ -443,7 +443,7 @@ class TestGetAllSalariesByEmployee:
                 paid_days=22,
                 unpaid_days=0,
                 payment_status="PENDING",
-                added_by=auth_headers["Authorization"].split()[1]
+                added_by=test_user.id
             )
             db_session.add(salary)
         await db_session.commit()
@@ -471,7 +471,7 @@ class TestUpdateBasePay:
     """Test cases for updating base pay record."""
 
     @pytest.mark.asyncio
-    async def test_update_base_pay_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession):
+    async def test_update_base_pay_success(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
         """Test successful base pay update (promotion)."""
         # Create employee and base pay
         employee = Employee(
@@ -497,7 +497,7 @@ class TestUpdateBasePay:
             employee_id=employee.id,
             base_salary=Decimal("6000.00"),
             allowances=Decimal("600.00"),
-            added_by=auth_headers["Authorization"].split()[1]
+            added_by=test_user.id
         )
         db_session.add(base_pay)
         await db_session.commit()
