@@ -14,7 +14,7 @@ from app.core.security import hash_password
 from app.enums.user_role import UserRole
 
 # Remove tables with PostgreSQL-specific types for SQLite testing
-for table_name in ["logs", "employee_base_pay", "employee_salary", "refresh_tokens"]:
+for table_name in ["logs"]:
     if table_name in Base.metadata.tables:
         Base.metadata.remove(Base.metadata.tables[table_name])
 

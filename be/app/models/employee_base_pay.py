@@ -3,7 +3,7 @@ from sqlalchemy import (
     Numeric
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.types import Uuid
 
 from app.db.base import Base
 
@@ -24,7 +24,7 @@ class EmployeeBasePay(Base):
     allowances = Column(Numeric(12, 2), default=0)
 
     added_by = Column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("users.id"),
         nullable=False
     )
