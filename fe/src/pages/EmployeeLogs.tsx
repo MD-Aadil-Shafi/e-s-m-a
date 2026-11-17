@@ -1,15 +1,13 @@
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Spin, Timeline, Tag } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "../redux/useTypedSelectors";
 import { getEmployeeLogs, clearLogs } from "../redux/reducers/employeeSlice";
-import { customTailwind } from "../utils/styles";
 
 const EmployeeLogs = () => {
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const { logsLoading, employeeLogs } = useAppSelector((state) => state.employee);
 
     useEffect(() => {
@@ -39,10 +37,10 @@ const EmployeeLogs = () => {
             {/* Header */}
             <div className="flex items-center gap-4 mb-6">
                 <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-1 text-slate-500 hover:text-purple-600 transition-colors"
+                    onClick={() => window.close()}
+                    className="flex items-center gap-1 text-slate-500 hover:text-red-500 transition-colors"
                 >
-                    <ArrowLeftOutlined /> Back
+                    <CloseOutlined /> Close Tab
                 </button>
 
                 <div>

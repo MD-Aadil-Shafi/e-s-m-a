@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from datetime import date, datetime
 from typing import Optional
 from uuid import UUID
+from app.schemas.employee import EmployeeResponse
 
 class EmployeeSalaryCreate(BaseModel):
     employee_id: int
@@ -33,6 +34,7 @@ class EmployeeBasePayResponse(BaseModel):
     allowances: Decimal
     added_by: UUID
     created_at: datetime
+    employee: EmployeeResponse
 
 
 class EmployeeSalaryUpdate(BaseModel):

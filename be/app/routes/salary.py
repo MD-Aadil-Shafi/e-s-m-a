@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
+from sqlalchemy.orm import joinedload
 from app.schemas.employee_salary import EmployeeSalaryCreate, EmployeePromote, EmployeeSalaryUpdate, EmployeeSalaryResponse, EmployeeBasePayCreate, EmployeeBasePayResponse
 from app.models.employee_salary import EmployeeSalary
 from app.models.employee_base_pay import EmployeeBasePay
@@ -100,6 +101,7 @@ async def getSingle(
     ):
     query = (
         select(EmployeeBasePay)
+        .options(joinedload(EmployeeBasePay.employee))
         .where(EmployeeBasePay.employee_id == id)
         )
     result = await db.execute(query)

@@ -11,6 +11,7 @@ const NotFound = lazy(() => import("./NotFound"));
 const Employees = lazy(()=> import("../../pages/Employees"));
 const Salaries = lazy(()=> import('../../pages/Salaries'));
 const EmployeeLogs = lazy(() => import("../../pages/EmployeeLogs"));
+const EmployeeSalary = lazy(() => import("../../pages/EmployeeSalary"));
 
 
 // interface SidebarItem {
@@ -56,8 +57,9 @@ const AuthorizedRoutes = () => {
           <Route path='/' element={<Dashboard/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path='/employees' element={<Employees/>}/>
-          <Route path='/employees/:id/logs' element={<EmployeeLogs/>}/>
+          <Route path='/log/:id' element={<EmployeeLogs/>}/>
           <Route path='/salaries' element={<Salaries/>}/>
+          <Route path='/salaries/:employee_id' element={<EmployeeSalary/>}/>
           <Route path="*" element={<NotFound />} />
         </Routes>
     </Suspense>

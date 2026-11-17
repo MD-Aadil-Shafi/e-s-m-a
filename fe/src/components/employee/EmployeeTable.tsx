@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Table } from 'antd';
 import { IoAdd } from 'react-icons/io5';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -64,7 +63,6 @@ const EMPLOYEE_FILTER_FIELDS: FilterConfig['fields'] = [
 
 const EmployeeTable = () => {
     const dispatch  = useAppDispatch();
-    const navigate  = useNavigate();
     const { loading, employees, pagination } = useAppSelector((s) => s.employee);
 
     // ── Local state ──────────────────────────────────────────────────────────
@@ -169,7 +167,7 @@ const EmployeeTable = () => {
                         label: 'View Logs',
                         key: 2,
                         icon: <TbLogs />,
-                        onClick: () => navigate(`/employees/${data.id}/logs`),
+                        onClick: () => window.open(`/log/${data.id}`, '_blank'),
                     },
                     {
                         label: 'Promote',
@@ -181,7 +179,7 @@ const EmployeeTable = () => {
                         label: 'View Full Detail',
                         key: 4,
                         icon: <BiDetail />,
-                        onClick: () => {},            // placeholder
+                        onClick: () => window.open(`/salaries/${data.id}`, '_blank'),
                     },
                     {
                         label: 'Delete',
