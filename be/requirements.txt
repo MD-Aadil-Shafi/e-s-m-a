@@ -13,3 +13,7 @@ slowapi
 alembic
 pypdf
 python-multipart
+pytest
+pytest-asyncio
+httpx
+aiosqlite
