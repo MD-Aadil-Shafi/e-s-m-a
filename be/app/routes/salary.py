@@ -7,6 +7,7 @@ from app.models.employee_base_pay import EmployeeBasePay
 from app.core.security import get_current_user, get_db
 from datetime import datetime
 from app.utils.log_helper import add_employee_log
+from datetime import date
 
 router = APIRouter(
     prefix="/api/v1/salary",
@@ -28,12 +29,22 @@ async def create(
     base_pay = result.scalar_one_or_none()
     if not base_pay:
         raise HTTPException(404, "Not base pay record found with this employee id.")
+    #id, month, year unique already applied on db level.
 
+    gross_salary = base_pay.base_salary + base_pay.allowances
+    per_day_salary = base_pay.base_salary / salary.working_days
+    unpaid_deduction = per_day_salary * salary.unpaid_days
+    net_salary = gross_salary - unpaid_deduction
     db_salary = EmployeeSalary(
         **salary.dict(),
         added_by = user.id,
         base_salary = base_pay.base_salary,
-        allowances = base_pay.allowances
+        allowances = base_pay.allowances,
+        gross_salary = gross_salary,
+        net_salary = net_salary,
+        deductions = unpaid_deduction,
+        payment_date = date.today()
+
     )
     db.add(db_salary)
     await db.commit()
@@ -41,7 +52,7 @@ async def create(
     return db_salary
 
 # to create base pay record
-@router.post("/base/{id}", response_model=EmployeeBasePayResponse)
+@router.post("/base", response_model=EmployeeBasePayResponse)
 async def create(
     data: EmployeeBasePayCreate,
     db: AsyncSession = Depends(get_db),
@@ -58,7 +69,7 @@ async def create(
     # //2026-11-15 22:53:45+05:30
     message = f"Base pay record created for employee id : {db_base_pay.employee_id} with base ${data.base_salary} and allowances ${data.allowances}. By {user.firstname} {user.lastname}, id: {user.id}. At {current_datetime}"
     try:
-        await add_employee_log(db=db, employee_id=id, message=message)
+        await add_employee_log(db=db, employee_id=db_base_pay.employee_id, message=message)
     except Exception as e:
         print("Error : ", e)
 
@@ -82,6 +93,22 @@ async def getSingle(
 
     return salary
 
+@router.get("/base-pay/{id}", response_model=EmployeeBasePayResponse)
+async def getSingle(
+    id: int, 
+    db: AsyncSession = Depends(get_db)
+    ):
+    query = (
+        select(EmployeeBasePay)
+        .where(EmployeeBasePay.employee_id == id)
+        )
+    result = await db.execute(query)
+    base_pay = result.scalar_one_or_none()
+    if not base_pay:
+        raise HTTPException(404, "No base pay record found with this ID.")
+
+    return base_pay
+
 
 @router.patch("/{id}", response_model=EmployeeSalaryResponse)
 async def update(
@@ -97,18 +124,19 @@ async def update(
     if not db_salary:
         raise HTTPException(404, "No salary record found with this ID.")
 
-    for key, value in salary.model_dump(exclude_unset=True, exclude={"id", "base_salary", "allowances"}).items():
+    for key, value in salary.model_dump(exclude_unset=True, exclude={"id"}).items():
         setattr(db_salary, key, value)
 
     await db.commit()
     await db.refresh(db_salary)
+    print('db sal : ', db_salary)
     #return db_salary
     current_datetime = datetime.now().astimezone()
     # //2026-11-15 22:53:45+05:30
     message = f"An update made in salary for employee id : {db_salary.employee_id}. By {user.firstname} {user.lastname}, id: {user.id}. At {current_datetime}"
 
     try:
-        await add_employee_log(db=db, employee_id=id, message=message)
+        await add_employee_log(db=db, employee_id=db_salary.employee_id, message=message)
     except Exception as e:
         print("Error : ", e)
 

@@ -2,6 +2,7 @@ from decimal import Decimal
 from pydantic import BaseModel, Field 
 from datetime import date, datetime
 from typing import Optional
+from uuid import UUID
 
 class EmployeeSalaryCreate(BaseModel):
     employee_id: int
@@ -9,7 +10,7 @@ class EmployeeSalaryCreate(BaseModel):
     payroll_year: int = Field(ge=2000)
     # base_salary: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
     # allowances: Decimal = Field(default=Decimal("0.00"), ge=0)
-    deductions: Decimal = Field(default=Decimal("0.00"), ge=0)
+    # deductions: Decimal = Field(default=Decimal("0.00"), ge=0)
     total_days: int = Field(gt=0)
     working_days: int = Field(ge=0)
     paid_days: int = Field(ge=0)
@@ -30,7 +31,7 @@ class EmployeeBasePayResponse(BaseModel):
     employee_id: int
     base_salary: Decimal
     allowances: Decimal
-    added_by: str
+    added_by: UUID
     created_at: datetime
 
 
@@ -71,7 +72,7 @@ class EmployeeSalaryResponse(BaseModel):
 
     payment_date: date | None
     payment_status: str
-    added_by: str
+    added_by: UUID
 
     class Config: 
             from_attributes = True 
