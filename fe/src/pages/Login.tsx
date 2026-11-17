@@ -10,8 +10,8 @@ const Login = () => {
 
   const dispatch = useAppDispatch();
   const {loading } = useAppSelector(state => state.auth)
-  const [email, setEmail] = useState('guest_admin')
-  const [password, setPassword] = useState("guest@erp.546")
+  const [email, setEmail] = useState('alice@test.com')
+  const [password, setPassword] = useState("test@12345")
 
   const handleSubmit = async() =>{
     await dispatch(loginAction({email:email, password}))

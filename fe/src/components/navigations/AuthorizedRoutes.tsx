@@ -10,6 +10,7 @@ const Dashboard = lazy(() => import("../../pages/Dashboard"));
 const NotFound = lazy(() => import("./NotFound"));
 const Employees = lazy(()=> import("../../pages/Employees"));
 const Salaries = lazy(()=> import('../../pages/Salaries'));
+const EmployeeLogs = lazy(() => import("../../pages/EmployeeLogs"));
 
 
 // interface SidebarItem {
@@ -35,7 +36,7 @@ const getItem = (
 
 export const sidebarItemsList: MenuProps['items'] = [
 	getItem("Dashboard", "dashboard", <MdSpaceDashboard className="fs-4" />),
-	getItem("Employees", "employee", <MdOutlineWorkHistory className="fs-4" />),
+	getItem("Employees", "employees", <MdOutlineWorkHistory className="fs-4" />),
 	getItem("Salaries", "salaries", <CgOrganisation className="fs-4" />)
 
 ];
@@ -55,6 +56,7 @@ const AuthorizedRoutes = () => {
           <Route path='/' element={<Dashboard/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path='/employees' element={<Employees/>}/>
+          <Route path='/employees/:id/logs' element={<EmployeeLogs/>}/>
           <Route path='/salaries' element={<Salaries/>}/>
           <Route path="*" element={<NotFound />} />
         </Routes>

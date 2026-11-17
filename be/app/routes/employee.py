@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_, asc, desc
+from sqlalchemy.orm import joinedload
 from app.schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeResponse
 from app.schemas.common import PaginatedResponse
 from app.models.employee import Employee
@@ -52,7 +53,9 @@ async def getLogs(
     db: AsyncSession = Depends(get_db)
     ):
     result = await db.execute(
-        select(Log).where(Log.employee_id == id)
+        select(Log)
+        .options(joinedload(Log.employee))
+        .where(Log.employee_id == id)
     )
     logs = result.scalar_one_or_none()
     if not logs:
@@ -115,7 +118,7 @@ async def list_employees(
         )
     if country:
         base_query = base_query.where(
-            Employee.country.ilike(f"%{search}%")
+            Employee.country.ilike(f"%{country}%")
         )
 
     if employment_type:

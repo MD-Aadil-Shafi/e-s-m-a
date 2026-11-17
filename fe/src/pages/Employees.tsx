@@ -1,9 +1,16 @@
 import React from 'react'
+import EmployeeTable from '../components/employee/EmployeeTable'
+import { Helmet } from 'react-helmet'
 
-const Employees = () => {
+const Employee = () => {
   return (
-    <div>Employees</div>
+    <>
+    <Helmet>
+      <title>CI | Employees</title>
+    </Helmet>
+    <EmployeeTable/>
+    </>
   )
 }
 
-export default Employees
+export default Employee
