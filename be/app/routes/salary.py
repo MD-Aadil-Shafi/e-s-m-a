@@ -2,7 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 from sqlalchemy.orm import joinedload
-from app.schemas.employee_salary import EmployeeSalaryCreate, EmployeePromote, EmployeeSalaryUpdate, EmployeeSalaryResponse, EmployeeBasePayCreate, EmployeeBasePayResponse
+from app.schemas.employee_salary import ( EmployeeSalaryCreate,
+                                          EmployeePromote, EmployeeSalaryUpdate, EmployeeSalaryResponse,
+                                            EmployeeBasePayCreate, EmployeeBasePayResponse,
+                                              EmployeeBasePayUpdateResponse)
 from app.models.employee_salary import EmployeeSalary
 from app.models.employee_base_pay import EmployeeBasePay
 from app.core.security import get_current_user, get_db
@@ -65,7 +68,7 @@ async def create(
     )
     db.add(db_base_pay)
     await db.commit()
-    await db.refresh(db_base_pay)
+    await db.refresh(db_base_pay, ["employee"])
     current_datetime = datetime.now().astimezone()
     # //2026-11-15 22:53:45+05:30
     message = f"Base pay record created for employee id : {db_base_pay.employee_id} with base ${data.base_salary} and allowances ${data.allowances}. By {user.firstname} {user.lastname}, id: {user.id}. At {current_datetime}"
@@ -164,7 +167,7 @@ async def getAllByEmployee(
     return salaries
 
 
-@router.patch("/modify-base/{id}", response_model=EmployeeBasePayResponse)
+@router.patch("/modify-base/{id}", response_model=EmployeeBasePayUpdateResponse)
 async def update(
     id: int,
     data: EmployeePromote,

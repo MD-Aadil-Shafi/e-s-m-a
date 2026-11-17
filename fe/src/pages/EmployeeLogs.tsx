@@ -61,7 +61,7 @@ const EmployeeLogs = () => {
                     <Spin size="large" />
                 </div>
             ) : (
-                <div className="max-w-2xl">
+                <div className="w-full">
                     {employeeLogs?.logs && employeeLogs.logs.length > 0 ? (
                         <>
                             <div className="flex items-center justify-between mb-4">

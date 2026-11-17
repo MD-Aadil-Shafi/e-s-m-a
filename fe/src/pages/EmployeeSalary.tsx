@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Spin, Card, Descriptions, Button, Result } from "antd";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "../redux/useTypedSelectors";
 import { getBasePay, clearBasePay } from "../redux/reducers/salarySlice";
+import FormModal from "../utils/FormModal";
+import AddBasePayForm from "../components/salary/modals/AddBasePayForm";
+import EditBasePayForm from "../components/salary/modals/EditBasePayForm";
 
 const fmt = (val: string) =>
     Number(val).toLocaleString("en-IN", { style: "currency", currency: "INR" });
@@ -11,31 +14,26 @@ const fmt = (val: string) =>
 const EmployeeSalary = () => {
     const { employee_id } = useParams<{ employee_id: string }>();
     const dispatch = useAppDispatch();
-    const { basePayLoading, basePay, basePayNotFound } = useAppSelector(
-        (s) => s.salary
-    );
+    const { basePayLoading, basePay, basePayNotFound } = useAppSelector((s) => s.salary);
+
+    const [addOpen,  setAddOpen]  = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
 
     useEffect(() => {
-        if (employee_id) {
-            dispatch(getBasePay(Number(employee_id)));
-        }
-        return () => {
-            dispatch(clearBasePay());
-        };
+        if (employee_id) dispatch(getBasePay(Number(employee_id)));
+        return () => { dispatch(clearBasePay()); };
     }, [employee_id]);
 
-    // Set tab title once employee data is available
     useEffect(() => {
         if (basePay?.employee) {
             const { firstname, lastname } = basePay.employee;
             document.title = `${firstname} ${lastname} — Salary`;
         }
-        return () => {
-            document.title = "Employee Management";
-        };
+        return () => { document.title = "Employee Management"; };
     }, [basePay]);
 
-    const employee = basePay?.employee;
+    const employee   = basePay?.employee;
+    const empIdNum   = Number(employee_id);
 
     return (
         <div className="p-4">
@@ -67,8 +65,9 @@ const EmployeeSalary = () => {
                 <div className="flex justify-center items-center min-h-[60vh]">
                     <Spin size="large" />
                 </div>
+
             ) : basePayNotFound ? (
-                /* ── No base pay exists yet ── */
+                /* ── No base pay yet ── */
                 <div className="flex justify-center items-center min-h-[55vh]">
                     <Result
                         status="info"
@@ -79,31 +78,40 @@ const EmployeeSalary = () => {
                                 type="primary"
                                 icon={<PlusOutlined />}
                                 className="bg-purple-500 hover:bg-purple-600 border-none"
-                                onClick={() => {
-                                    // TODO: wire up Add Base Pay action
-                                }}
+                                onClick={() => setAddOpen(true)}
                             >
                                 Add Base Pay
                             </Button>
                         }
                     />
                 </div>
+
             ) : basePay ? (
                 /* ── Base pay card ── */
-                <div className="max-w-2xl">
+                <div className="w-full">
                     <Card
                         title="Base Pay Details"
                         bordered
                         className="shadow-sm"
                         extra={
-                            <span className="text-xs text-slate-400">
-                                Added {new Date(basePay.created_at).toLocaleDateString("en-IN", {
-                                    day: "2-digit", month: "short", year: "numeric",
-                                })}
-                            </span>
+                            <div className="flex items-center gap-4">
+                                <span className="text-xs text-slate-400">
+                                    Added{" "}
+                                    {new Date(basePay.created_at).toLocaleDateString("en-IN", {
+                                        day: "2-digit", month: "short", year: "numeric",
+                                    })}
+                                </span>
+                                <Button
+                                    size="small"
+                                    icon={<EditOutlined />}
+                                    onClick={() => setEditOpen(true)}
+                                >
+                                    Edit
+                                </Button>
+                            </div>
                         }
                     >
-                        <Descriptions column={1} bordered size="small">
+                        <Descriptions column={2} bordered size="small">
                             <Descriptions.Item label="Employee">
                                 {employee?.firstname} {employee?.lastname}
                             </Descriptions.Item>
@@ -125,12 +133,7 @@ const EmployeeSalary = () => {
                             </Descriptions.Item>
                             <Descriptions.Item label="Total (CTC)">
                                 <span className="font-bold text-slate-700">
-                                    {fmt(
-                                        String(
-                                            Number(basePay.base_salary) +
-                                            Number(basePay.allowances)
-                                        )
-                                    )}
+                                    {fmt(String(Number(basePay.base_salary) + Number(basePay.allowances)))}
                                 </span>
                             </Descriptions.Item>
                             <Descriptions.Item label="Joining Date">
@@ -141,7 +144,36 @@ const EmployeeSalary = () => {
                         </Descriptions>
                     </Card>
                 </div>
+
             ) : null}
+
+            {/* ── Add Base Pay modal ── */}
+            <FormModal
+                open={addOpen}
+                setOpen={setAddOpen}
+                content={
+                    <AddBasePayForm
+                        employeeId={empIdNum}
+                        handleClose={() => setAddOpen(false)}
+                        onSuccess={() => setAddOpen(false)}
+                    />
+                }
+            />
+
+            {/* ── Edit Base Pay modal ── */}
+            <FormModal
+                open={editOpen}
+                setOpen={setEditOpen}
+                content={
+                    basePay && (
+                        <EditBasePayForm
+                            initialValues={basePay}
+                            handleClose={() => setEditOpen(false)}
+                            onSuccess={() => setEditOpen(false)}
+                        />
+                    )
+                }
+            />
         </div>
     );
 };
