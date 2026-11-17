@@ -1,0 +1,57 @@
+.login-bg{
+    background-image: url('./assets/bg.webp');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.register-div{
+    background-image: url('./assets/bg.webp');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;  
+}
+
+.t-shadow{
+    text-shadow: 0px 0px 5px rgba(17, 25, 40, 0.75);
+}
+
+button{
+    transition: all 0.3s;
+}
+button:hover{
+    transform: scale(1.02);
+}
+button:disabled{
+    opacity: 0.5;
+}
+
+.custom-inputs{
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    padding: 5px;
+}
+.custom-inputs:focus{
+    transition: all 0.5s;
+    outline: 1px solid purple;
+}
+
+.white-spinner .ant-spin-dot-item {
+    background-color: white !important;
+}
+
+.scroll-reveal-div{
+    transition: 0.5s all ease;
+}
+
+
+.custom-reveal-th{
+animation-name: scale-up;
+  animation-duration: 0.5s;
+}
+
+
+
+@keyframes scale-up {
+	from {transform: scaleY(0);}
+	to {transform: scaleY(1);}
+}
