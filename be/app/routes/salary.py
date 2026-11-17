@@ -129,9 +129,42 @@ async def update(
     if not db_salary:
         raise HTTPException(404, "No salary record found with this ID.")
 
-    for key, value in salary.model_dump(exclude_unset=True, exclude={"id"}).items():
-        setattr(db_salary, key, value)
+    # for key, value in salary.model_dump(exclude_unset=True, exclude={"id"}).items():
+    #     setattr(db_salary, key, value)
+    payload = salary.model_dump(exclude_unset=True, exclude={"id"})
 
+    deduction_fields = {"unpaid_days", "working_days", "paid_days", "total_days", "deductions"}
+    if deduction_fields.intersection(payload):
+        result = await db.execute(
+            select(EmployeeBasePay).where(
+                EmployeeBasePay.employee_id == db_salary.employee_id
+            )
+        )
+        base_pay = result.scalar_one_or_none()
+        if not base_pay:
+            raise HTTPException(404, "Employee base pay not found")
+
+        # if exists use it else use default form db salary
+        working_days = payload.get("working_days", db_salary.working_days)
+        unpaid_days = payload.get("unpaid_days", db_salary.unpaid_days) 
+        if working_days <= 0:
+            raise HTTPException(400, "Working days must be greater than zero.")
+
+        if unpaid_days < 0 or unpaid_days > working_days:
+            raise HTTPException(400, "Invalid unpaid days.")
+
+        gross_salary = base_pay.base_salary + base_pay.allowances
+        per_day_salary = base_pay.base_salary / working_days
+        unpaid_deduction = per_day_salary * unpaid_days
+        net_salary = gross_salary - unpaid_deduction
+
+        payload["gross_salary"] = gross_salary
+        payload["deductions"] = unpaid_deduction
+        payload["net_salary"] = net_salary
+
+    for key, value in payload.items():
+        setattr(db_salary, key, value)
+        
     await db.commit()
     await db.refresh(db_salary)
     print('db sal : ', db_salary)
