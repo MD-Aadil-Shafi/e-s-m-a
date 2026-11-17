@@ -13,9 +13,10 @@ from app.models.refresh_token import RefreshToken
 from app.core.security import hash_password
 from app.enums.user_role import UserRole
 
-# Remove the logs table which uses PostgreSQL-specific ARRAY type
-if "logs" in Base.metadata.tables:
-    Base.metadata.remove(Base.metadata.tables["logs"])
+# Remove tables with PostgreSQL-specific types for SQLite testing
+for table_name in ["logs", "employee_base_pay", "employee_salary", "refresh_tokens"]:
+    if table_name in Base.metadata.tables:
+        Base.metadata.remove(Base.metadata.tables[table_name])
 
 # Test database URL (use SQLite for testing)
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -101,12 +102,15 @@ async def test_user_data() -> dict:
 
 
 @pytest.fixture
-async def auth_headers(client: AsyncClient, test_user: User) -> dict:
+async def auth_headers(test_user: User) -> dict:
     """Return authorization headers with a valid access token."""
-    login_data = {
-        "email": test_user.email,
-        "password": "Test123!"
-    }
-    response = await client.post("/api/v1/auth/login", json=login_data)
-    token = response.json()["access_token"]
+    from jose import jwt
+    from datetime import timedelta
+    from app.core.config import settings
+    from app.core.security import create_token
+
+    token = create_token(
+        {"sub": str(test_user.id)},
+        timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     return {"Authorization": f"Bearer {token}"}
