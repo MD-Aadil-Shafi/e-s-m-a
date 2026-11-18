@@ -74,6 +74,7 @@ export type EditSalaryPayload = {
 export type ConfirmPaymentPayload = {
     id: number;
     payment_status: "PROCESSED" | "HOLD";
+    version: number;
 };
 
 // ─── State ────────────────────────────────────────────────────────────────────

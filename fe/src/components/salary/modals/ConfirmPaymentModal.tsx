@@ -23,7 +23,7 @@ const ConfirmPaymentModal = ({ record, handleClose, onSuccess }: Props) => {
     const [status, setStatus] = useState<"PROCESSED" | "HOLD">("PROCESSED");
 
     const handleSubmit = async () => {
-        const result = await dispatch(confirmPayment({ id: record.id, payment_status: status }));
+        const result = await dispatch(confirmPayment({ id: record.id, payment_status: status, version:record.version }));
         if (!result.error) {
             onSuccess();
         }
