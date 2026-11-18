@@ -42,10 +42,12 @@ const EMPLOYEE_FILTER_FIELDS: FilterConfig['fields'] = [
         placeholder: 'All countries',
         options: [
             { value: 'India',          label: 'India' },
-            { value: 'United States',  label: 'United States' },
-            { value: 'United Kingdom', label: 'United Kingdom' },
+            { value: 'USA',  label: 'United States' },
+            { value: 'UK', label: 'United Kingdom' },
             { value: 'Canada',         label: 'Canada' },
-            { value: 'Australia',      label: 'Australia' },
+            { value: 'China',      label: 'China' },
+            { value: 'Japan',      label: 'Japan' },
+            { value: 'UAE',      label: 'UAE' }
         ],
     },
     {
@@ -68,7 +70,7 @@ const EmployeeTable = () => {
     // ── Local state ──────────────────────────────────────────────────────────
     const [search,      setSearch]      = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageLimit]                   = useState(20);
+    const [pageLimit,   setPageLimit]   = useState(20);
 
     // Filter state — keys match EmployeeQueryParams (minus page/limit/search)
     const [filters, setFilters] = useState<Record<string, any>>({ order: 'desc' });
@@ -90,14 +92,14 @@ const EmployeeTable = () => {
         dispatch(getEmployees(params));
     };
 
-    // ── Single effect: debounce search, immediate on page/filter change ──────
+    // ── Single effect: debounce search, immediate on page/filter/limit change ──
     useEffect(() => {
         const delay = search ? 600 : 0;
         const timer = setTimeout(() => {
             fetchEmployees(currentPage, search, filters);
         }, delay);
         return () => clearTimeout(timer);
-    }, [search, currentPage, filters]);
+    }, [search, currentPage, pageLimit, filters]);
 
     // ── When filters change reset to page 1 ──────────────────────────────────
     const handleFilterChange = (newFilters: Record<string, any>) => {
@@ -106,7 +108,10 @@ const EmployeeTable = () => {
     };
 
     // ── Handlers ─────────────────────────────────────────────────────────────
-    const handlePage = (pageNo: number) => setCurrentPage(pageNo);
+    const handlePage = (pageNo: number, pageSize: number) => {
+        setCurrentPage(pageNo);
+        setPageLimit(pageSize);
+    };
 
     const handleAddSuccess = () => {
         setAddOpen(false);
@@ -169,12 +174,12 @@ const EmployeeTable = () => {
                         icon: <TbLogs />,
                         onClick: () => window.open(`/log/${data.id}`, '_blank'),
                     },
-                    {
-                        label: 'Promote',
-                        key: 3,
-                        icon: <PiMoney />,
-                        onClick: () => {},            // placeholder
-                    },
+                    // {
+                    //     label: 'Promote',
+                    //     key: 3,
+                    //     icon: <PiMoney />,
+                    //     onClick: () => {},            // placeholder
+                    // },
                     {
                         label: 'View Full Detail',
                         key: 4,

@@ -125,8 +125,10 @@ async def dashboard_metrics(
             func.sum(EmployeeSalary.net_salary), 0
         )
     ).where(
-        extract("month", EmployeeSalary.created_at) == last_month,
-        extract("year", EmployeeSalary.created_at) == last_year
+        EmployeeSalary.payroll_month == last_month,
+        EmployeeSalary.payroll_year == last_year,
+        # extract("month", EmployeeSalary.created_at) == last_month,
+        # extract("year", EmployeeSalary.created_at) == last_year
     )
     total_paid = await db.scalar(payroll_query)
 
