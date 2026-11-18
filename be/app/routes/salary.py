@@ -217,14 +217,18 @@ async def update(
 ):
     
     result = await db.execute(
-                select(EmployeeBasePay).where(EmployeeBasePay.employee_id == id)
+                select(EmployeeBasePay).where(
+                    EmployeeBasePay.employee_id == id,
+                    EmployeeBasePay.version == data.version)
+                .with_for_update()
             )
     db_base_pay = result.scalar_one_or_none()
     if not db_base_pay:
-        raise HTTPException(404, "No base pay record found with this ID.")
+        raise HTTPException(404, "No base pay record found with this ID Or it got modified by another HR. Please refresh to get new version of this record if it exists.")
     
-    for key, value in data.model_dump(exclude_unset=True, exclude={"id"}).items():
+    for key, value in data.model_dump(exclude_unset=True, exclude={"id", "version"}).items():
         setattr(db_base_pay, key, value)
+    db_base_pay.version += 1
 
     await db.commit()
     await db.refresh(db_base_pay)

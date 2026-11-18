@@ -35,6 +35,7 @@ class EmployeeBasePayResponse(BaseModel):
     added_by: UUID
     created_at: datetime
     employee: EmployeeResponse
+    version: int
     
 class EmployeeBasePayUpdateResponse(BaseModel):
     employee_id: int
@@ -42,6 +43,7 @@ class EmployeeBasePayUpdateResponse(BaseModel):
     allowances: Decimal
     added_by: UUID
     created_at: datetime
+    version: int
 
 
 class EmployeeSalaryUpdate(BaseModel):

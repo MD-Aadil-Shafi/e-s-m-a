@@ -22,6 +22,7 @@ class EmployeeBasePay(Base):
 
     base_salary = Column(Numeric(12, 2), nullable=False)
     allowances = Column(Numeric(12, 2), default=0)
+    version = Column(Integer, nullable=False, default=1)
 
     added_by = Column(
         Uuid(as_uuid=True),
