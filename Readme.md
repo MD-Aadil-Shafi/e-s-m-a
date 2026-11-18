@@ -1,5 +1,5 @@
 # Prerequisites and application setup
-Node version 21 or higher.
+Node version 21 or higher & Python version 3.10 or higher.
 
 ### Simple steps to run in dev mode:
 1. Development PostgreSQL instance setup:
@@ -97,6 +97,7 @@ npm run test
 Will add single command of "docker compose up -d" to run all services.
 
 ## Short architecture overview:
+<img width="1442" height="726" alt="image" src="https://github.com/user-attachments/assets/ec9ddc31-fdfe-4a5b-bca6-938ec617d363" />
 
 The application follows a simple three-layer architecture using Python FastAPI, TypeScript, React.js and PostgreSQL.
 
