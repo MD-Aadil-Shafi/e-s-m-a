@@ -99,6 +99,9 @@ Will add single command of "docker compose up -d" to run all services.
 ## Short architecture overview:
 <img width="1442" height="726" alt="image" src="https://github.com/user-attachments/assets/ec9ddc31-fdfe-4a5b-bca6-938ec617d363" />
 
+#### Simple flow:
+HR -> Login -> Employee list -> Select View full details from action dropdown -> Add Base pay once -> Add salary onwards
+
 The application follows a simple three-layer architecture using Python FastAPI, TypeScript, React.js and PostgreSQL.
 
 1. Frontend: Hr professionals with role HR can access, modify, create employee records, salary records, base pay records, view logs, view previous histories etc.
