@@ -55,6 +55,7 @@ async def create(
     await db.refresh(db_salary)
     return db_salary
 
+
 # to create base pay record
 @router.post("/base", response_model=EmployeeBasePayResponse)
 async def create(
@@ -79,6 +80,8 @@ async def create(
 
     return db_base_pay
 
+
+# to get last added salary record on an employee.
 @router.get("/last/{id}", response_model=EmployeeSalaryResponse)
 async def getSingle(
     id: int, 
@@ -97,6 +100,8 @@ async def getSingle(
 
     return salary
 
+
+# to get base pay of an  employee with base pay and allowances.
 @router.get("/base-pay/{id}", response_model=EmployeeBasePayResponse)
 async def getSingle(
     id: int, 
@@ -115,6 +120,7 @@ async def getSingle(
     return base_pay
 
 
+#to update a salary record by salary record id
 @router.patch("/{id}", response_model=EmployeeSalaryResponse)
 async def update(
     id: int,
@@ -182,6 +188,7 @@ async def update(
 
 
 
+# to get all salary record of an employee by employee id.
 @router.get("/employee/{id}", response_model=list[EmployeeSalaryResponse])
 async def getAllByEmployee(
     id: int, 
@@ -200,6 +207,7 @@ async def getAllByEmployee(
     return salaries
 
 
+# to modify base pay and allowances of an employee by employee id.
 @router.patch("/modify-base/{id}", response_model=EmployeeBasePayUpdateResponse)
 async def update(
     id: int,

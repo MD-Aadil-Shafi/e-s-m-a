@@ -4,6 +4,11 @@ import { refreshTokenAction } from "../redux/reducers/authSlice";
 export const errorToast = async(err:any)=>{
 
     if(err?.response?.data?.message){
+        if(err?.response?.data?.message === "Invalid token"){
+            toast.warn("Token Expired")
+            await refreshTokenAction()
+            return
+        }
         return toast.error(err?.response?.data?.message || "Oops!! something went wrong. Please try later.")
     }else if(typeof err?.response?.data?.detail !== "string"){
         let message = ''

@@ -17,7 +17,7 @@ from app.core.exceptions import (
 from app.routes.auth import router as auth_router
 from app.routes.employee import router as employee_router
 from app.routes.salary import router as salary_router
-
+from app.routes.metrics import router as metrics_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -72,6 +72,7 @@ async def test()->dict:
 app.include_router(auth_router)
 app.include_router(employee_router)
 app.include_router(salary_router)
+app.include_router(metrics_router)
 
 
 if __name__ == "__main__":
