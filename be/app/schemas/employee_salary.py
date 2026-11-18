@@ -47,10 +47,8 @@ class EmployeeBasePayUpdateResponse(BaseModel):
 
 
 class EmployeeSalaryUpdate(BaseModel):
-    # base_salary: Decimal | None = Field(
-    #     default=None, gt=0, max_digits=12, decimal_places=2
-    # )
-    # allowances: Decimal | None = Field(default=None, ge=0)
+    version: int
+
     deductions: Decimal | None = Field(default=None, ge=0)
 
     total_days: int | None = Field(default=None, gt=0)
@@ -84,6 +82,7 @@ class EmployeeSalaryResponse(BaseModel):
     payment_date: date | None
     payment_status: str
     added_by: UUID
+    version: int
 
     class Config: 
             from_attributes = True 

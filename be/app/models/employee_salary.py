@@ -44,6 +44,8 @@ class EmployeeSalary(Base):
         nullable=False
     )
 
+    version = Column(Integer, nullable=False, default=1)
+
     added_by = Column(
         Uuid(as_uuid=True),
         ForeignKey("users.id"),

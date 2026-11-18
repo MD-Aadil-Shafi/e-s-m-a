@@ -129,11 +129,13 @@ async def update(
     user = Depends(get_current_user)
 ):
     result = await db.execute(
-            select(EmployeeSalary).where(EmployeeSalary.id == id)
+            select(EmployeeSalary)
+            .where(EmployeeSalary.id == id, EmployeeSalary.version == salary.version)
+            .with_for_update()
         )
     db_salary = result.scalar_one_or_none()
     if not db_salary:
-        raise HTTPException(404, "No salary record found with this ID.")
+        raise HTTPException(404, "No salary record found with this ID or it was modified by someone else. Please refresh to get the latest version.")
 
     # for key, value in salary.model_dump(exclude_unset=True, exclude={"id"}).items():
     #     setattr(db_salary, key, value)
@@ -170,6 +172,7 @@ async def update(
 
     for key, value in payload.items():
         setattr(db_salary, key, value)
+    db_salary.version += 1
         
     await db.commit()
     await db.refresh(db_salary)
