@@ -19,6 +19,7 @@ class EmployeeSalaryCreate(BaseModel):
 # gross, net, payment handled inward
 
 class EmployeePromote(BaseModel):
+    version: int
     base_salary: Decimal | None = Field(default=None, gt=0, max_digits=12, decimal_places=2)
     allowances: Decimal | None = Field(default=None, ge=0)
     remark: str

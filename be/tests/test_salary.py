@@ -366,6 +366,7 @@ class TestUpdateSalary:
         await db_session.refresh(salary)
 
         update_data = {
+            "version": 1,
             "payment_status": "PAID",
             "payment_date": "2024-01-31"
         }
@@ -379,7 +380,7 @@ class TestUpdateSalary:
     @pytest.mark.asyncio
     async def test_update_salary_not_found(self, client: AsyncClient, auth_headers: dict):
         """Test updating non-existent salary."""
-        update_data = {"payment_status": "PAID"}
+        update_data = {"version": 1, "payment_status": "PAID"}
         response = await client.patch("/api/v1/salary/99999", json=update_data, headers=auth_headers)
         assert response.status_code == 404
         assert "No salary record found" in response.json()["message"]
@@ -387,7 +388,7 @@ class TestUpdateSalary:
     @pytest.mark.asyncio
     async def test_update_salary_no_auth(self, client: AsyncClient):
         """Test updating salary without authentication."""
-        update_data = {"payment_status": "PAID"}
+        update_data = {"version": 1, "payment_status": "PAID"}
         response = await client.patch("/api/v1/salary/1", json=update_data)
         assert response.status_code == 401
 
@@ -503,6 +504,7 @@ class TestUpdateBasePay:
         await db_session.commit()
 
         update_data = {
+            "version": 1,
             "base_salary": "7000.00",
             "allowances": "700.00",
             "remark": "Promotion to Senior Director"
@@ -519,6 +521,7 @@ class TestUpdateBasePay:
     async def test_update_base_pay_not_found(self, client: AsyncClient, auth_headers: dict):
         """Test updating base pay for non-existent employee."""
         update_data = {
+            "version": 1,
             "base_salary": "7000.00",
             "allowances": "700.00",
             "remark": "Promotion"
@@ -531,6 +534,7 @@ class TestUpdateBasePay:
     async def test_update_base_pay_no_auth(self, client: AsyncClient):
         """Test updating base pay without authentication."""
         update_data = {
+            "version": 1,
             "base_salary": "7000.00",
             "allowances": "700.00",
             "remark": "Promotion"
@@ -839,7 +843,7 @@ class TestUpdateSalaryExtended:
 
     @pytest.mark.asyncio
     async def test_update_salary_deductions_field(self, client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_user: User):
-        """PATCH with a deductions value should persist correctly."""
+        """PATCH with unpaid_days should trigger recalculation and produce a non-zero deduction."""
         employee = Employee(
             firstname="Karl",
             lastname="Mann",
@@ -888,12 +892,14 @@ class TestUpdateSalaryExtended:
         await db_session.commit()
         await db_session.refresh(salary)
 
-        update_data = {"deductions": "200.00"}
+        update_data = {"version": 1, "unpaid_days": 2, "working_days": 20, "paid_days": 18}
 
         with patch('app.routes.salary.add_employee_log'):
             response = await client.patch(f"/api/v1/salary/{salary.id}", json=update_data, headers=auth_headers)
         assert response.status_code == 200
-        assert Decimal(str(response.json()["deductions"])) == Decimal("200.00")
+        # deduction = base_salary / working_days * unpaid_days = 6000 / 20 * 2 = 600
+        expected_deduction = Decimal("6000.00") / Decimal("20") * Decimal("2")
+        assert Decimal(str(response.json()["deductions"])) == expected_deduction
 
     @pytest.mark.asyncio
     async def test_update_salary_negative_deductions(self, client: AsyncClient, auth_headers: dict):
@@ -956,7 +962,7 @@ class TestUpdateSalaryExtended:
         await db_session.commit()
         await db_session.refresh(salary)
 
-        update_data = {"payment_date": "2024-03-28", "payment_status": "PAID"}
+        update_data = {"version": 1, "payment_date": "2024-03-28", "payment_status": "PAID"}
 
         with patch('app.routes.salary.add_employee_log'):
             response = await client.patch(f"/api/v1/salary/{salary.id}", json=update_data, headers=auth_headers)
@@ -1049,7 +1055,7 @@ class TestUpdateBasePayValidation:
         db_session.add(base_pay)
         await db_session.commit()
 
-        update_data = {"allowances": "1200.00", "remark": "Allowance increment"}
+        update_data = {"version": 1, "allowances": "1200.00", "remark": "Allowance increment"}
 
         with patch('app.routes.salary.add_employee_log'):
             response = await client.patch(
@@ -1094,7 +1100,7 @@ class TestUpdateBasePayValidation:
         db_session.add(base_pay)
         await db_session.commit()
 
-        update_data = {"base_salary": "12000.00", "remark": "Annual raise"}
+        update_data = {"version": 1, "base_salary": "12000.00", "remark": "Annual raise"}
 
         with patch('app.routes.salary.add_employee_log'):
             response = await client.patch(

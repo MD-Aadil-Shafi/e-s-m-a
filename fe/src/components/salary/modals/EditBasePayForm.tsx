@@ -56,8 +56,9 @@ const EditBasePayForm = ({ initialValues, handleClose, onSuccess }: Props) => {
 
     const onSubmit = async (data: TFormSchema) => {
         // Only send fields that were actually filled in
-        const payload: { employee_id: number; remark: string; base_salary?: string; allowances?: string } = {
+        const payload: { employee_id: number; version: number; remark: string; base_salary?: string; allowances?: string } = {
             employee_id: initialValues.employee_id,
+            version: initialValues.version,
             remark: data.remark,
         };
         if (data.base_salary && data.base_salary !== "") payload.base_salary = data.base_salary;

@@ -14,6 +14,7 @@ export type BasePay = {
     allowances: string;
     added_by: string;
     created_at: string;
+    version: number;
     employee?: Employee;    // present on GET & POST; absent on PATCH
 };
 
@@ -34,6 +35,7 @@ export type SalaryRecord = {
     payment_date: string | null;
     payment_status: string;
     added_by: string;
+    version: number;
 };
 
 export type AddBasePayPayload = {
@@ -44,6 +46,7 @@ export type AddBasePayPayload = {
 
 export type EditBasePayPayload = {
     employee_id: number;
+    version: number;
     base_salary?: string;
     allowances?: string;
     remark: string;
@@ -61,6 +64,7 @@ export type AddSalaryPayload = {
 
 export type EditSalaryPayload = {
     id: number;
+    version: number;
     total_days?: number;
     working_days?: number;
     paid_days?: number;
@@ -141,7 +145,11 @@ export const editBasePay = createAsyncThunk(
             toast.success("Base pay updated successfully!");
             return res.data as BasePay;
         } catch (err: any) {
-            errorToast(err);
+            if (err?.response?.status === 404 && err?.response?.data?.detail?.includes("refresh")) {
+                toast.error("Base pay was modified by someone else. Please refresh and try again.");
+            } else {
+                errorToast(err);
+            }
             return rejectWithValue(err?.response?.data?.detail || "Something went wrong!");
         }
     }
@@ -191,7 +199,11 @@ export const editSalary = createAsyncThunk(
             toast.success("Salary record updated successfully!");
             return res.data as SalaryRecord;
         } catch (err: any) {
-            errorToast(err);
+            if (err?.response?.status === 404 && err?.response?.data?.detail?.includes("refresh")) {
+                toast.error("Salary record was modified by someone else. Please refresh and try again.");
+            } else {
+                errorToast(err);
+            }
             return rejectWithValue(err?.response?.data?.detail || "Something went wrong!");
         }
     }

@@ -80,7 +80,7 @@ const EditSalaryForm = ({ initialValues, handleClose, onSuccess }: Props) => {
     };
 
     const onSubmit = async (data: TFormSchema) => {
-        const payload: Parameters<typeof editSalary>[0] = { id: initialValues.id };
+        const payload: Parameters<typeof editSalary>[0] = { id: initialValues.id, version: initialValues.version };
         if (data.total_days   !== undefined) payload.total_days   = data.total_days;
         if (data.working_days !== undefined) payload.working_days = data.working_days;
         if (data.paid_days    !== undefined) payload.paid_days    = data.paid_days;
